@@ -1,0 +1,3 @@
+name: GeoIPTools
+main: uk.org.whoami.geoip.GeoIP
+version: 0.1
