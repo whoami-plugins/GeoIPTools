@@ -16,7 +16,7 @@ import org.bukkit.plugin.java.JavaPlugin;
  * @author whoami <whoami@whoami.org.uk>
  * @author
  */
-public class GeoIP extends JavaPlugin {
+public class GeoIPTools extends JavaPlugin {
 
     /**
      * Type for country database
