@@ -1,4 +1,4 @@
-package org.uk.whoami.geoip;
+package uk.org.whoami.geoip;
 
 import com.maxmind.geoip.Country;
 import com.maxmind.geoip.Location;
@@ -7,14 +7,13 @@ import java.io.IOException;
 import java.net.Inet4Address;
 import java.net.Inet6Address;
 import java.net.InetAddress;
-import java.util.logging.Logger;
+import java.net.MalformedURLException;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
  * This bukkit plugin provides an API for Maxmind GeoIP database lookups.
  *
  * @author whoami <whoami@whoami.org.uk>
- * @author
  */
 public class GeoIPTools extends JavaPlugin {
 
@@ -29,24 +28,21 @@ public class GeoIPTools extends JavaPlugin {
 
     private LookupService geo = null;
     private LookupService geov6 = null;
+    private Settings settings;
 
-    private String countryDatabasePath;
-    private String cityDatabasePath;
-    private String ipv6DatabasePath;
-
-    private static final Logger log = Logger.getLogger("Minecraft");
-
-    /**
-     *
-     */
     @Override
     public void onEnable() {
-        //TODO
+        settings = new Settings(this.getConfiguration());
+        ConsoleLogger.info("Starting database updates");
+        try {
+            Updater.update(settings);
+        } catch(MalformedURLException ex) {
+            ConsoleLogger.info(ex.getMessage());
+        }
+        ConsoleLogger.info(this.getDescription().getName() + " " + this.getDescription().getVersion() + " enabled");
+        init(CITYDATABASE,true);
     }
 
-    /**
-     * Closes the databases
-     */
     @Override
     public void onDisable() {
         if(geo != null) {
@@ -58,6 +54,7 @@ public class GeoIPTools extends JavaPlugin {
 
         geo = null;
         geov6 = null;
+        ConsoleLogger.info(this.getDescription().getName() + " " + this.getDescription().getVersion() + " disabled");
     }
 
     /**
@@ -71,17 +68,17 @@ public class GeoIPTools extends JavaPlugin {
         int cache = memoryCache ? LookupService.GEOIP_MEMORY_CACHE : LookupService.GEOIP_STANDARD;
 
         if(databaseType == COUNTRYDATABASE) {
-            path = countryDatabasePath;
+            path = settings.getCountryDatabasePath();
         } else if(databaseType == CITYDATABASE) {
-            path = cityDatabasePath;
+            path = settings.getCityDatabasePath();
         } else {
-            log.info("[GeoIPTool] Unknows database type");
+            ConsoleLogger.info("Unknow database type");
             return;
         }
         try {
             this.geo = new LookupService(path, cache);
         } catch(IOException ex) {
-            log.info("[GeoIPTools] Can't load " + path);
+            ConsoleLogger.info("Can't load " + path);
         }
     }
 
@@ -92,9 +89,9 @@ public class GeoIPTools extends JavaPlugin {
     public void initIPv6(boolean memoryCache) {
         int cache = memoryCache ? LookupService.GEOIP_MEMORY_CACHE : LookupService.GEOIP_STANDARD;
         try {
-            this.geov6 = new LookupService(ipv6DatabasePath, cache);
+            this.geov6 = new LookupService(settings.getIPv6DatabasePath(), cache);
         } catch(IOException ex) {
-            log.info("[GeoIPTools] Can't load " + ipv6DatabasePath);
+            ConsoleLogger.info("Can't load " + settings.getIPv6DatabasePath());
         }
     }
 
@@ -110,7 +107,7 @@ public class GeoIPTools extends JavaPlugin {
             if(geo != null) {
                 return geo.getCountry(inet);
             } else {
-                log.info("[GeoIPTools] Uninitialised LookupService");
+                ConsoleLogger.info("Uninitialised LookupService");
                 return new Country("--", "N/A");
             }
         }
@@ -118,12 +115,12 @@ public class GeoIPTools extends JavaPlugin {
             if(geov6 != null) {
                 return geov6.getCountryV6(inet);
             } else {
-                log.info("[GeoIPTools] Uninitialised IPv6 LookupService");
+                ConsoleLogger.info("Uninitialised IPv6 LookupService");
                 return new Country("--", "N/A");
             }
         }
         //Will never be reached
-        log.info("[GeoIPTools] I see you are using IPv5");
+        ConsoleLogger.info("I see you are using IPv5");
         return new Country("--", "N/A");
     }
 
@@ -139,10 +136,10 @@ public class GeoIPTools extends JavaPlugin {
             if(geo != null) {
                 return geo.getLocation(inet);
             } else {
-                log.info("[GeoIPTools] Uninitialised LookupService");
+                ConsoleLogger.info("Uninitialised LookupService");
             }
         } else if(inet instanceof Inet6Address) {
-            log.info("[GeoIPTools] IPv6 is not supported for getLocation");
+            ConsoleLogger.info("IPv6 is not supported for getLocation");
         }
         return null;
     }
