@@ -64,15 +64,13 @@ public class GeoIPTools extends JavaPlugin {
                 geo.initCity();
                 geo.initIPv6();
             } else {
-                geo.close();
-                geo = null;
                 ConsoleLogger.info("Unsupported bitmask");
+                return null;
             }
         } catch(IOException e) {
             ConsoleLogger.info("Can't load database");
             ConsoleLogger.info(e.getMessage());
-            geo.close();
-            geo = null;
+            return null;
         }
         return geo;
     }
