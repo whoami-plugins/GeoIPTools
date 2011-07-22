@@ -1,4 +1,4 @@
-package uk.org.whoami.geoip;
+package uk.org.whoami.geoip.util;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -16,6 +16,11 @@ import java.util.zip.GZIPInputStream;
  */
 public class Updater {
 
+    /**
+     *
+     * @param settings
+     * @throws MalformedURLException
+     */
     public static void update(Settings settings) throws MalformedURLException {
         if(settings.getCityDatabasePath().equals(settings.CITYDATABASEPATH)) {
             URL url = new URL(settings.getCityDatabaseURL());
