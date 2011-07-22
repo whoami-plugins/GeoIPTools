@@ -1,11 +1,22 @@
+/*
+ * Copyright 2011 Sebastian Köhler <sebkoehler@whoami.org.uk>.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package uk.org.whoami.geoip.util;
 
 import org.bukkit.util.config.Configuration;
 
-/**
- *
- * @author Sebastian Köhler <sebkoehler@whoami.org.uk>
- */
 public class Settings {
 
     final String CITYDATABASEPATH = "./plugins/GeoIPTools/GeoLiteCity.dat";
@@ -13,19 +24,12 @@ public class Settings {
     final String IPV6DATABASEBATH = "./plugins/GeoIPTools/GeoIPv6.dat";
     private Configuration conf;
 
-    /**
-     *
-     * @param conf
-     */
     public Settings(Configuration conf) {
         this.conf = conf;
         conf.load();
         write();
     }
 
-    /**
-     *
-     */
     public final void write() {
         getIPv6DatabaseURL();
         getCityDatabaseURL();
@@ -34,19 +38,11 @@ public class Settings {
         conf.save();
     }
 
-    /**
-     *
-     * @param lastUpdated
-     */
     public void setLastUpdated(long lastUpdated) {
         String key = "Update:lastUpdated";
         conf.setProperty(key, String.valueOf(lastUpdated));
     }
 
-    /**
-     *
-     * @return
-     */
     public long getLastUpdated() {
         String key = "Update:lastUpdated";
         if(conf.getString(key) == null) {
@@ -55,10 +51,6 @@ public class Settings {
         return Long.parseLong(conf.getString(key));
     }
 
-    /**
-     *
-     * @return
-     */
     public String getIPv6DatabaseURL() {
         String key = "URL.IPv6Database";
         if(conf.getString(key) == null) {
@@ -68,10 +60,6 @@ public class Settings {
         return conf.getString(key);
     }
 
-    /**
-     *
-     * @return
-     */
     public String getCityDatabaseURL() {
         String key = "URL.CityDatabase";
         if(conf.getString(key) == null) {
@@ -81,10 +69,6 @@ public class Settings {
         return conf.getString(key);
     }
 
-    /**
-     *
-     * @return
-     */
     public String getCountryDatabaseURL() {
         String key = "URL.CountryDatabase";
         if(conf.getString(key) == null) {
@@ -94,10 +78,6 @@ public class Settings {
         return conf.getString(key);
     }
 
-    /**
-     *
-     * @return
-     */
     public String getIPv6DatabasePath() {
         String key = "Path.IPv6Database";
         if(conf.getString(key) == null) {
@@ -106,10 +86,6 @@ public class Settings {
         return conf.getString(key);
     }
 
-    /**
-     *
-     * @return
-     */
     public String getCityDatabasePath() {
         String key = "Path.cityDatabase";
         if(conf.getString(key) == null) {
@@ -118,10 +94,6 @@ public class Settings {
         return conf.getString(key);
     }
 
-    /**
-     *
-     * @return
-     */
     public String getCountryDatabasePath() {
         String key = "Path.countryDatabase";
         if(conf.getString(key) == null) {
