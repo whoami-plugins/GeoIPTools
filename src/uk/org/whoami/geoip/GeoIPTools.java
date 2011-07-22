@@ -62,7 +62,7 @@ public class GeoIPTools extends JavaPlugin {
      * @param databaseType city or country database
      * @param memoryCache cache database in memory?
      */
-    public void init(int databaseType, boolean memoryCache) {
+    public boolean init(int databaseType, boolean memoryCache) {
         String path = "";
         int cache = memoryCache ? LookupService.GEOIP_MEMORY_CACHE : LookupService.GEOIP_STANDARD;
 
@@ -71,27 +71,31 @@ public class GeoIPTools extends JavaPlugin {
         } else if(databaseType == CITYDATABASE) {
             path = settings.getCityDatabasePath();
         } else {
-            ConsoleLogger.info("Unknow database type");
-            return;
+            ConsoleLogger.info("Unknown database type");
+            return false;
         }
         try {
             this.geo = new LookupService(path, cache);
         } catch(IOException ex) {
             ConsoleLogger.info("Can't load " + path);
+            return false;
         }
+        return true;
     }
 
     /**
      * Initialise the IPv6 LookupService
      * @param memoryCache cache database in memory?
      */
-    public void initIPv6(boolean memoryCache) {
+    public boolean initIPv6(boolean memoryCache) {
         int cache = memoryCache ? LookupService.GEOIP_MEMORY_CACHE : LookupService.GEOIP_STANDARD;
         try {
             this.geov6 = new LookupService(settings.getIPv6DatabasePath(), cache);
         } catch(IOException ex) {
             ConsoleLogger.info("Can't load " + settings.getIPv6DatabasePath());
+            return false;
         }
+        return true;
     }
 
     /**
