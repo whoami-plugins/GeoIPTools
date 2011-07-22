@@ -40,7 +40,6 @@ public class GeoIPTools extends JavaPlugin {
             ConsoleLogger.info(ex.getMessage());
         }
         ConsoleLogger.info(this.getDescription().getName() + " " + this.getDescription().getVersion() + " enabled");
-        init(CITYDATABASE,true);
     }
 
     @Override
