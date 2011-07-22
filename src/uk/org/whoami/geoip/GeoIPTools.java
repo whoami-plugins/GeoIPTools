@@ -41,7 +41,7 @@ public class GeoIPTools extends JavaPlugin {
     }
 
     /**
-     * Get the GeoIPLookup. The returned value will at least have the
+     * Get the GeoIPLookup. The returned object will at least have the
      * functionality specified by the bitmask.
      *
      * The bitmask can be combined with "or" for example:
