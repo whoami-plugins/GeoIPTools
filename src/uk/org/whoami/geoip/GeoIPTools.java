@@ -33,7 +33,7 @@ public class GeoIPTools extends JavaPlugin {
     private GeoIPLookup geo = null;
 
     @Override
-    public void onEnable() {
+    public void onLoad() {
         settings = new Settings(this.getConfiguration());
         ConsoleLogger.info("Starting database updates");
         try {
@@ -41,9 +41,13 @@ public class GeoIPTools extends JavaPlugin {
         } catch(MalformedURLException ex) {
             ConsoleLogger.info(ex.getMessage());
         }
+
         ConsoleLogger.info(this.getDescription().getName() + " " + this.
-                getDescription().getVersion() + " enabled");
+                getDescription().getVersion() + " loaded");
     }
+
+    @Override
+    public void onEnable() {}
 
     @Override
     public void onDisable() {
@@ -56,11 +60,13 @@ public class GeoIPTools extends JavaPlugin {
     }
 
     /**
-     * Get the GeoIPLookup. The returned object will at least have the
+     * Get a GeoIPLookup. The returned object will at least have the
      * functionality specified by the bitmask.
      *
-     * The bitmask can be combined with "or" for example:
+     * The bitmask can be combined with "|" for example:
      * getGeoIPLookup(GeoIPLookup.COUNTRYDATABASE | GeoIPLookup.IPV6DATABASE);
+     *
+     * You can not combine GeoIPLookup.COUNTRYDATABASE|GeoIPLookup.CITYDATABASE
      *
      * @param bitmask Bitmask to specify the funtionality
      * @return A GeoIPLookup or null if the bitmask is wrong or an error occurs
@@ -71,9 +77,13 @@ public class GeoIPTools extends JavaPlugin {
                 geo = new GeoIPLookup(settings);
             }
             if(bitmask == GeoIPLookup.COUNTRYDATABASE) {
+                geo.initCountry();
             } else if(bitmask == GeoIPLookup.CITYDATABASE) {
                 geo.initCity();
+            } else if(bitmask == GeoIPLookup.IPV6DATABASE) {
+                geo.initIPv6();
             } else if(bitmask == (GeoIPLookup.COUNTRYDATABASE | GeoIPLookup.IPV6DATABASE)) {
+                geo.initCountry();
                 geo.initIPv6();
             } else if(bitmask == (GeoIPLookup.CITYDATABASE | GeoIPLookup.IPV6DATABASE)) {
                 geo.initCity();

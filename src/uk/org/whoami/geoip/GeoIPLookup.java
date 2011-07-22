@@ -52,8 +52,7 @@ public class GeoIPLookup {
     private int type;
 
     GeoIPLookup(Settings settings) throws IOException {
-        geo = new LookupService(settings.getCountryDatabasePath(),LookupService.GEOIP_MEMORY_CACHE);
-        type = COUNTRYDATABASE;
+        type = -1;
         this.settings = settings;
     }
 
@@ -121,9 +120,18 @@ public class GeoIPLookup {
         return geov6;
     }
 
+    void initCountry() throws IOException {
+        if(type == -1) {
+            geo = new LookupService(settings.getCountryDatabasePath(),LookupService.GEOIP_MEMORY_CACHE);
+            type = COUNTRYDATABASE;
+        }
+    }
+
     void initCity() throws IOException {
-        if(type == COUNTRYDATABASE) {
-            geo.close();
+        if(type == COUNTRYDATABASE || type == -1) {
+            if(type != -1) {
+                geo.close();
+            }
             geo = new LookupService(settings.getCityDatabasePath(),LookupService.GEOIP_MEMORY_CACHE);
             type = CITYDATABASE;
         }
