@@ -1,5 +1,7 @@
-\.orig$
-\.orig\..*$
-\.chg\..*$
-\.rej$
-\.conflict\~$
+syntax: glob
+lib/**
+build/**
+nbproject/**
+dist/**
+nbproject/**
+build.xml
