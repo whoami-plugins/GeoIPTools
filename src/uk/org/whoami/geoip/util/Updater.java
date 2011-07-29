@@ -54,9 +54,6 @@ public class Updater {
 
     private static void updateFile(URL url, File file, long lastUpdated) {
         HttpURLConnection con = null;
-        BufferedOutputStream out = null;
-        GZIPInputStream in = null;
-
         try {
             con = (HttpURLConnection) url.openConnection();
             con.setRequestMethod("GET");
@@ -66,27 +63,19 @@ public class Updater {
             con.connect();
 
             if(con.getResponseCode() == HttpURLConnection.HTTP_OK) {
-                byte[] buffer = new byte[4096];
-                out = new BufferedOutputStream(new FileOutputStream(file));
-                in = new GZIPInputStream(con.getInputStream());
-                int len;
-                while((len = in.read(buffer, 0, buffer.length)) > -1) {
-                    out.write(buffer, 0, len);
+                try(BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(file));
+                    GZIPInputStream in = new GZIPInputStream(con.getInputStream());
+                ) {
+                    byte[] buffer = new byte[4096];
+                    int len;
+                    while((len = in.read(buffer, 0, buffer.length)) > -1) {
+                        out.write(buffer, 0, len);
+                    }
                 }
             }
         } catch(IOException e) {
             ConsoleLogger.info(e.getMessage());
         } finally {
-            try {
-                out.close();
-            } catch(IOException e) {
-            } catch(NullPointerException e) {
-            }
-            try {
-                in.close();
-            } catch(IOException e) {
-            } catch(NullPointerException e) {
-            }
             try {
                 con.disconnect();
             } catch(NullPointerException e) {
