@@ -35,7 +35,16 @@ public class Settings {
         getCityDatabaseURL();
         getCountryDatabaseURL();
         getLastUpdated();
+        isUpdaterDisabled();
         conf.save();
+    }
+    
+    public boolean isUpdaterDisabled() {
+        String key = "Update:disabled";
+        if(conf.getString(key) == null) {
+            conf.setProperty(key, false);
+        }
+        return conf.getBoolean(key, false);
     }
 
     public void setLastUpdated(long lastUpdated) {
