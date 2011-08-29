@@ -29,22 +29,25 @@ public class Updater {
 
     public static void update(Settings settings) throws MalformedURLException {
         if(settings.getCityDatabasePath().equals(settings.CITYDATABASEPATH)) {
-            URL url = new URL(settings.getCityDatabaseURL());
             File file = new File(settings.CITYDATABASEPATH);
+            if(file.exists() && settings.isUpdaterDisabled()) return;
+            URL url = new URL(settings.getCityDatabaseURL());
             updateFile(url, file, settings.getLastUpdated());
             ConsoleLogger.info(settings.CITYDATABASEPATH + " updated");
         }
 
         if(settings.getCountryDatabasePath().equals(settings.COUNTRYDATABASEPATH)) {
-            URL url = new URL(settings.getCountryDatabaseURL());
             File file = new File(settings.COUNTRYDATABASEPATH);
+            if(file.exists() && settings.isUpdaterDisabled()) return;
+            URL url = new URL(settings.getCountryDatabaseURL());
             updateFile(url, file, settings.getLastUpdated());
             ConsoleLogger.info(settings.COUNTRYDATABASEPATH + " updated");
         }
 
         if(settings.getIPv6DatabasePath().equals(settings.IPV6DATABASEBATH)) {
-            URL url = new URL(settings.getIPv6DatabaseURL());
             File file = new File(settings.IPV6DATABASEBATH);
+            if(file.exists() && settings.isUpdaterDisabled()) return;
+            URL url = new URL(settings.getIPv6DatabaseURL());
             updateFile(url, file, settings.getLastUpdated());
             ConsoleLogger.info(settings.IPV6DATABASEBATH + " updated");
         }

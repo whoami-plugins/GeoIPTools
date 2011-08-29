@@ -39,9 +39,7 @@ public class GeoIPTools extends JavaPlugin {
         settings = new Settings(this.getConfiguration());
         ConsoleLogger.info("Starting database updates");
         try {
-            if (!settings.isUpdaterDisabled()) {
-                Updater.update(settings);
-            }
+            Updater.update(settings);
         } catch (MalformedURLException ex) {
             ConsoleLogger.info(ex.getMessage());
         }
