@@ -1,6 +1,6 @@
 name: GeoIPTools
 main: uk.org.whoami.geoip.GeoIPTools
-version: 0.1
+version: 0.2
 commands:
     geoupdate:
         description: Update the GeoIPDatabase files
