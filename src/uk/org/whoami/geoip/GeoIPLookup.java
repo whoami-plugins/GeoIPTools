@@ -142,6 +142,21 @@ public class GeoIPLookup {
             geov6 = new LookupService(settings.getIPv6DatabasePath(),LookupService.GEOIP_MEMORY_CACHE);
         }
     }
+    
+    void reload() throws IOException {
+        if(geo != null) {
+            geo.close();
+            if(type == COUNTRYDATABASE) {
+                geo = new LookupService(settings.getCountryDatabasePath(),LookupService.GEOIP_MEMORY_CACHE);
+            } else {
+                geo = new LookupService(settings.getCityDatabasePath(),LookupService.GEOIP_MEMORY_CACHE);
+            }
+        }
+        if(geov6 != null) {
+            geov6.close();
+            geov6 = new LookupService(settings.getIPv6DatabasePath(),LookupService.GEOIP_MEMORY_CACHE);
+        }
+    }
 
     void close() {
         if(geo != null) {

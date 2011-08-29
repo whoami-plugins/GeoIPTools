@@ -20,6 +20,8 @@ import uk.org.whoami.geoip.util.Settings;
 import uk.org.whoami.geoip.util.Updater;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
@@ -37,28 +39,39 @@ public class GeoIPTools extends JavaPlugin {
         settings = new Settings(this.getConfiguration());
         ConsoleLogger.info("Starting database updates");
         try {
-            if(!settings.isUpdaterDisabled()) {
+            if (!settings.isUpdaterDisabled()) {
                 Updater.update(settings);
             }
-        } catch(MalformedURLException ex) {
+        } catch (MalformedURLException ex) {
             ConsoleLogger.info(ex.getMessage());
         }
 
-        ConsoleLogger.info(this.getDescription().getName() + " " + this.
-                getDescription().getVersion() + " loaded");
+        ConsoleLogger.info(this.getDescription().getName() + " " + this.getDescription().getVersion() + " loaded");
     }
 
     @Override
-    public void onEnable() {}
+    public void onEnable() {
+    }
 
     @Override
     public void onDisable() {
-        if(geo != null) {
+        if (geo != null) {
             geo.close();
             geo = null;
         }
-        ConsoleLogger.info(this.getDescription().getName() + " " + this.
-                getDescription().getVersion() + " disabled");
+        ConsoleLogger.info(this.getDescription().getName() + " " + this.getDescription().getVersion() + " disabled");
+    }
+
+    @Override
+    public boolean onCommand(CommandSender sender, Command cmd, String label,
+            String[] args) {
+        if (label.equalsIgnoreCase("geoupdate")) {
+            if (sender.hasPermission("GeoIPTools.geoupdate")) {
+                this.getServer().getScheduler().scheduleAsyncDelayedTask(this, new UpdateTask(sender, settings, geo), 0);
+            }
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -75,26 +88,26 @@ public class GeoIPTools extends JavaPlugin {
      */
     public GeoIPLookup getGeoIPLookup(int bitmask) {
         try {
-            if(geo == null) {
+            if (geo == null) {
                 geo = new GeoIPLookup(settings);
             }
-            if(bitmask == GeoIPLookup.COUNTRYDATABASE) {
+            if (bitmask == GeoIPLookup.COUNTRYDATABASE) {
                 geo.initCountry();
-            } else if(bitmask == GeoIPLookup.CITYDATABASE) {
+            } else if (bitmask == GeoIPLookup.CITYDATABASE) {
                 geo.initCity();
-            } else if(bitmask == GeoIPLookup.IPV6DATABASE) {
+            } else if (bitmask == GeoIPLookup.IPV6DATABASE) {
                 geo.initIPv6();
-            } else if(bitmask == (GeoIPLookup.COUNTRYDATABASE | GeoIPLookup.IPV6DATABASE)) {
+            } else if (bitmask == (GeoIPLookup.COUNTRYDATABASE | GeoIPLookup.IPV6DATABASE)) {
                 geo.initCountry();
                 geo.initIPv6();
-            } else if(bitmask == (GeoIPLookup.CITYDATABASE | GeoIPLookup.IPV6DATABASE)) {
+            } else if (bitmask == (GeoIPLookup.CITYDATABASE | GeoIPLookup.IPV6DATABASE)) {
                 geo.initCity();
                 geo.initIPv6();
             } else {
                 ConsoleLogger.info("Unsupported bitmask");
                 return null;
             }
-        } catch(IOException e) {
+        } catch (IOException e) {
             ConsoleLogger.info("Can't load database");
             ConsoleLogger.info(e.getMessage());
             return null;
