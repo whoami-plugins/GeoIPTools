@@ -62,7 +62,7 @@ public class GeoIPLookup {
      * @param inet Can be Inet4Address or Inet6Address
      * @return The country
      */
-    public Country getCountry(InetAddress inet) {
+    public synchronized Country getCountry(InetAddress inet) {
         if(inet instanceof Inet4Address) {
             if(geo != null) {
                 return geo.getCountry(inet);
@@ -91,7 +91,7 @@ public class GeoIPLookup {
      * @param inet A Inet4Address
      * @return Location or null if the city database was not initialised
      */
-    public Location getLocation(InetAddress inet) {
+    public synchronized Location getLocation(InetAddress inet) {
         if(inet instanceof Inet4Address) {
             if(geo != null) {
                 return geo.getLocation(inet);
@@ -104,30 +104,14 @@ public class GeoIPLookup {
         return null;
     }
 
-    /**
-     * Get the LookupService
-     * @return The LookupService
-     */
-    public LookupService getLookupService() {
-        return geo;
-    }
-
-    /**
-     * Get the IPv6 LookupService
-     * @return The LookupService
-     */
-    public LookupService getLookupServiccev6() {
-        return geov6;
-    }
-
-    void initCountry() throws IOException {
+    synchronized void initCountry() throws IOException {
         if(type == -1) {
             geo = new LookupService(settings.getCountryDatabasePath(),LookupService.GEOIP_MEMORY_CACHE);
             type = COUNTRYDATABASE;
         }
     }
 
-    void initCity() throws IOException {
+    synchronized void initCity() throws IOException {
         if(type == COUNTRYDATABASE || type == -1) {
             if(type != -1) {
                 geo.close();
@@ -137,13 +121,13 @@ public class GeoIPLookup {
         }
     }
 
-    void initIPv6() throws IOException {
+    synchronized void initIPv6() throws IOException {
         if(geov6 == null) {
             geov6 = new LookupService(settings.getIPv6DatabasePath(),LookupService.GEOIP_MEMORY_CACHE);
         }
     }
     
-    void reload() throws IOException {
+    synchronized void reload() throws IOException {
         if(geo != null) {
             geo.close();
             if(type == COUNTRYDATABASE) {
@@ -158,7 +142,7 @@ public class GeoIPLookup {
         }
     }
 
-    void close() {
+    synchronized void close() {
         if(geo != null) {
             geo.close();
             geo = null;

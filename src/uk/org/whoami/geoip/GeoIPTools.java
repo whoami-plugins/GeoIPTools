@@ -23,6 +23,7 @@ import java.net.MalformedURLException;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitScheduler;
 
 /**
  * This bukkit plugin provides an API for Maxmind GeoIP database lookups.
@@ -65,11 +66,20 @@ public class GeoIPTools extends JavaPlugin {
             String[] args) {
         if (label.equalsIgnoreCase("geoupdate")) {
             if (sender.hasPermission("GeoIPTools.geoupdate")) {
-                this.getServer().getScheduler().scheduleAsyncDelayedTask(this, new UpdateTask(sender, settings, geo), 0);
+                BukkitScheduler sched = this.getServer().getScheduler();
+                sched.scheduleAsyncDelayedTask(this, new UpdateTask(this, sender), 0);
             }
             return true;
         }
         return false;
+    }
+
+    Settings getSettings() {
+        return settings;
+    }
+    
+    GeoIPLookup getGeoIPLookup() {
+        return geo;
     }
 
     /**
